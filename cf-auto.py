@@ -4,15 +4,11 @@ import argparse
 import difflib
 import re
 
-# TODO: after creating a prototype think about refactoring and installation of a script
-
 parser = argparse.ArgumentParser(description="Codeforces automatization tool.")
-
 subparsers = parser.add_subparsers(dest="command")
 
 TEMPLATE_PATH = "cf_template.cpp"
 BUILD_OPTIONS = "-Wall -g0 -O0 --std=c++20"
-DEFINE_MULTILINE_TEST = "-DMULTILINE_TEST"
 
 
 def extract_problem_from_path(problem_dir):
@@ -26,22 +22,6 @@ def extract_problem_from_path(problem_dir):
 		problem_letter = split_problem_dir[-1]
 
 	return (contest_id, problem_letter)
-
-
-def get_sample_test(problem_dir):
-	'''Fetches sample test for a problem. Running cf-auto create <problem> is required.'''
-	contest_id, problem_letter = extract_problem_from_path(problem_dir)
-
-	print("Fetching tests for problem:", contest_id, problem_letter)
-	# TODO: parse "codeforces.com/contest/<contest_id>/<problem_letter>"
-	# TODO: if the problem has multiline tests THEN add "-DMULTILINE_TEST" to "BUILD_OPTIONS"
-
-
-def get_problem_list(contest_id):
-	# TODO: fetch actual problem list for a given contest.
-	fetched_problems = ["A", "B", "C", "D"]
-
-	return fetched_problems
 
 
 def build_and_run(problem_path, input_file, output_file):
@@ -66,32 +46,17 @@ def get_in_out_ans(problem_dir):
 
 
 def find_valid_directory(contest_id, problem_letter):
-	problem_dir = ""	
-	practice_problem_dir = f"./practice/{contest_id}_{problem_letter}"
+	problem_dir = ""
 	contest_problem_dir = f"./{contest_id}/{problem_letter}"
 
-	practice_dir_is_valid = os.path.isdir(practice_problem_dir)
 	contest_dir_is_valid = os.path.isdir(contest_problem_dir)
 
-	if practice_dir_is_valid and contest_dir_is_valid:
-		print("Problem directory isn't unique:")
-		print("(1) ", practice_problem_dir, "\n", "(2) ", contest_problem_dir, sep='')
-
-		option = int(input("Choose on of given options: type 1 or 2\n"))
-		if option == 1:
-			return practice_problem_dir
-		elif option == 2:
-			return contest_problem_dir
-		
-		print("Invalid option is choosen.")
-		return None
-	elif contest_dir_is_valid or practice_dir_is_valid:
-		return practice_problem_dir if practice_dir_is_valid else contest_problem_dir
-	else:
+	if not contest_dir_is_valid:
 		print(f"No valid directory is found for a problem {contest_id}{problem_letter}")
 		return None
 
-
+	return contest_problem_dir
+		
 
 def check_solution(output_file, answer_file):
     """Compares out.txt with ans.txt and highlights differences."""
@@ -135,56 +100,41 @@ def subcommand(args=[], parent=subparsers):
 
 @subcommand(
 	[
-		argument("mode", help="[contest] C | [problem] P"),
 		argument("contest", help="contest ID", type=str),
-		argument("problem", help="problem letter", nargs='?', default="", type=str)
+		argument("problem", help="problem letter", type=str)
 	],
 	parent = subparsers
 )
 def create(args):
-	'''Creates a structured folders and parses test samples into "in.txt"'''
+	'''Creates a structured folder for a given problem.'''
 
-	practice_mode_on = args.mode == 'P'
 	contest_id       = args.contest
-	problem_letter   = args.problem if args.problem != "" else None
+	problem_letter   = args.problem.upper()
 
-	if (practice_mode_on and problem_letter is None):
-		print("No full problem name provided -- unable to create a problem directory.")
+	if (not os.path.exists(contest_id)):
+			system(f"mkdir {contest_id}")
+			print(f"Directory: {contest_id} -- is created.")
+
+	problem_name = contest_id + problem_letter
+	problem_dir = os.path.join(contest_id, problem_letter)
+		
+	files = \
+		["in.txt","out.txt","ans.txt",f"{problem_name}.cpp"]
+
+	files_to_create = \
+		" ".join([os.path.join(problem_dir, file) for file in files])
+		
+	if (os.path.exists(problem_dir)):
+		print(f"The directory {problem_dir} already exists. Nothing is changed.")
 		return
-		
-	parent_dir = "practice" if practice_mode_on else contest_id
-	if (not os.path.exists(parent_dir)):
-			system(f"mkdir {parent_dir}")
 
-	problems = \
-		[problem_letter.upper()] if practice_mode_on else get_problem_list(contest_id)
+	system(f"mkdir {problem_dir}")
+	system(f"touch {files_to_create}")
 
-	for problem_letter in problems:
-		problem_name = contest_id + problem_letter
-		parent_dir_sufix = contest_id + "_" + problem_letter if practice_mode_on else problem_letter
-
-		problem_dir = os.path.join(parent_dir, parent_dir_sufix)
-		
-		files = \
-			["in.txt","out.txt","ans.txt",f"{problem_name}.cpp"]
-		files_to_create = \
-			" ".join([os.path.join(problem_dir, file) for file in files])
-		
-		if (not os.path.exists(problem_dir)):
-			system(f"mkdir {problem_dir}")
-			system(f"touch {files_to_create}")
-			if not TEMPLATE_PATH is None and os.path.exists(TEMPLATE_PATH):
-				system(f"cat {TEMPLATE_PATH} > {os.path.join(problem_dir, f"{problem_name}.cpp")}")
-			get_sample_test(problem_dir)
-		else:
-			print(f"The directory {problem_dir} already exists. Nothing is changed.")
-			break
-
-
-	# TODO: get sample tests by implementing get_sample_test function
-	
-
-	return	
+	if not TEMPLATE_PATH is None and os.path.exists(TEMPLATE_PATH):
+		system(f"cat {TEMPLATE_PATH} > {os.path.join(problem_dir, f"{problem_name}.cpp")}")
+		print("OK!")
+	return
 
 
 @subcommand(
@@ -225,4 +175,3 @@ def main():
 
 if __name__ == "__main__":
 	main()
-

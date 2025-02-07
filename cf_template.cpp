@@ -53,11 +53,6 @@ int main() {
   fast_io
 
   ll t = 1;
-  #ifdef MULTILINE_TEST 
-  cout << "MULTILINE_TEST is DEFINED\n";
-  // cin >> t;
-  #endif
-
   w(t) {
     solve();
   }
