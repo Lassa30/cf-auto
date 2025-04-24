@@ -11,14 +11,13 @@ def make_problem_url(contest_id, problem_id):
     return f"https://codeforces.com/contest/{contest_id}/problem/{problem_id}"
 
 
-class Scrapper:
+class Scraper:
     def __init__(self):
         self.options = uc.ChromeOptions()
         self.options.add_argument(
             "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
         )
         self.driver = uc.Chrome(options=self.options)
-        sleep(1)
 
     def get_test_cases(self, problem_url):
         self.driver_get_url(problem_url)
@@ -59,16 +58,8 @@ class Scrapper:
 
     def driver_get_url(self, url):
         self.driver.get(url)
-        print("got url")
         sleep(1)
 
     def driver_quit(self):
         if self.driver:
             self.driver.quit()
-
-
-def init_scrapper():
-    print("init scrapper -- WAIT")
-    scrapper = Scrapper()
-    print("init scrapper -- OK")
-    return scrapper

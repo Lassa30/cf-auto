@@ -1,7 +1,7 @@
 import os
 from os import system
 from cf import constants
-from cf.scrapper import make_contest_url, make_problem_url
+from cf import scraping
 
 
 def get_in_out_ans(contest_id):
@@ -110,26 +110,49 @@ def write_to(path, text):
 
 
 def get_files_to_create(problem_dir, problem_name):
-    return " ".join(
-        [
-            os.path.join(problem_dir, file)
-            for file in ["in.txt", "out.txt", "ans.txt", f"{problem_name}.cpp"]
-        ]
-    )
+    files = ["in.txt", "out.txt", "ans.txt", f"{problem_name}.cpp"]
+    get_file_path = lambda file: os.path.join(problem_dir, file)
+    return " ".join([get_file_path(file) for file in files])
 
 
-def create_contest(contest_id, scrapper):
-    problems_list = scrapper.get_problem_list(make_contest_url(contest_id))
+def create_practice_problem(contest_id, problem_id):
+    scraper = scraping.Scraper()
+
+    problem_name = "_".join([contest_id, problem_id])
+    problem_dir = os.path.join("./practice", problem_name)
+    problem_path = os.path.join(problem_dir, problem_name)
+    problem_url = scraping.make_problem_url(contest_id, problem_id)
+
+    files = get_files_to_create(problem_dir, problem_name)
+    system(f"mkdir -p ./practice")
+
+    if not os.path.exists(problem_dir):
+        system(f"mkdir -p {problem_dir}")
+        system(f"touch {files}")
+        write_to(problem_path + ".cpp", read_from(constants.TEMPLATE_PATH))
+
+        test_input, test_output = scraper.get_test_cases(problem_url)
+
+        write_to(os.path.join(problem_dir, "in.txt"), test_input)
+        write_to(os.path.join(problem_dir, "out.txt"), test_output)
+    else:
+        print("create_practice_problem", contest_id, problem_id, "is already present")
+
+
+def create_contest(contest_id):
+    scraper = scraping.Scraper()
+    contest_url = scraping.make_contest_url(contest_id)
+    problems_list = scraper.get_problem_list(contest_url)
 
     if not os.path.exists(contest_id):
         system(f"mkdir {contest_id}")
         for problem_id in problems_list:
-            create_problem(contest_id, problem_id, scrapper)
+            create_problem(contest_id, problem_id, scraper)
     else:
         print(f"The directory {contest_id} already exists. Nothing is changed.")
 
 
-def create_problem(contest_id, problem_id, scrapper):
+def create_problem(contest_id, problem_id, scraper: scraping.Scraper):
     problem_dir = f"{contest_id}/{problem_id}"
     problem_name: str = contest_id + problem_id
 
@@ -140,42 +163,11 @@ def create_problem(contest_id, problem_id, scrapper):
         os.path.join(problem_dir, f"{problem_name}.cpp"),
         read_from(constants.TEMPLATE_PATH),
     )
-
-    test_input, test_output = scrapper.get_test_cases(
-        make_problem_url(contest_id, problem_id)
-    )
+    problem_url = scraping.make_problem_url(contest_id, problem_id)
+    test_input, test_output = scraper.get_test_cases(problem_url)
 
     write_to(os.path.join(problem_dir, "in.txt"), test_input)
     write_to(os.path.join(problem_dir, "out.txt"), test_output)
-
-
-def create_practice_problem(contest_id, problem_id, scrapper):
-    problem_name = "_".join([contest_id, problem_id])
-    problem_dir = os.path.join("./practice", problem_name)
-    problem_path = os.path.join(problem_dir, problem_name)
-
-    files = get_files_to_create(problem_dir, problem_name)
-    system(f"mkdir -p ./practice")
-
-    if not os.path.exists(problem_dir):
-        system(f"mkdir -p {problem_dir}")
-        system(f"touch {files}")
-        write_to(problem_path + ".cpp", read_from(constants.TEMPLATE_PATH))
-
-        test_input, test_output = scrapper.get_test_cases(
-            make_problem_url(contest_id, problem_id)
-        )
-
-        write_to(os.path.join(problem_dir, "in.txt"), test_input)
-        write_to(os.path.join(problem_dir, "out.txt"), test_output)
-    else:
-        print(
-            "create_practice_problem",
-            contest_id,
-            problem_id,
-            "is already present",
-        )
-    return
 
 
 def read_from(path):

@@ -1,24 +1,101 @@
-# cf-auto
-A command line tool to minimize interactions with web interface and allow you to:
+# About cf-auto
+Here is the description you get after typing `cf-auto --help`
+```bash
+usage: cf-auto.py [-h] {create,run} ...
 
-- create directories for a specified problem (using your template .cpp file)
-- run and fetch sample tests for a specified problem (maybe in future but not yet...)
+Codeforces routine tasks automation tool.
 
-## Usage
-1) Copy cf-auto script to the directory where you want to store problems.
-2) Read further how to configure it
+positional arguments:
+  {create,run}
 
-Optional: you may add the alias to "~/.bashrc" `alias cf-auto="python3 cf-auto.py"`
+options:
+  -h, --help    show this help message and exit
 
-To insert sample tests you may use the command:
-- `cat > in.txt` or `cat > out.txt` and paste what you've copied \
-right into terminal.
+```
+From this we can tell, that `cf-auto` is capable of:
+- creating necessary files for the specified **contest** OR **problem**
+- **compiling** and **running** your `C++` code with further comparing with fetched test cases: Right here, right now.
 
-## Configuration
+# Usage example
+Use `cf-auto` and solve problems in one directory
 
-There are two parameters that could be specified in "cf-auto.py" file:
+## Create files for the contest
+```bash
+cf-auto create C 2000
+```
+The resulting directory has the following structure:
+```
+2000
+├── A
+│   ├── 2000A.cpp
+│   ├── ans.txt
+│   ├── in.txt
+│   └── out.txt
+├── B
+│   ├── 2000B.cpp
+│   ├── ans.txt
+│   ├── in.txt
+│   └── out.txt
+├── C
+│   ├── 2000C.cpp
+│   ├── ans.txt
+│   ├── in.txt
+│   └── out.txt
+etc.
+```
+## Create one problem to practice on
+```bash
+cf-auto create P 2000 A
+```
+And you get:
+```
+practice/
+└── 2000_A
+    ├── 2000_A.cpp
+    ├── ans.txt
+    ├── in.txt
+    └── out.txt
+```
 
-- TEMPLATE_PATH = "cf_template.cpp" --> relative path to your template file.
-- BUILD_OPTIONS = "-Wall -g0 -O0 --std=c++20" --> your personal options
+## Demo
+Coming soon...
 
-These are values by default.
+# Installation
+1. Clone the repo
+```bash
+git clone https://github.com/Lassa30/cf-auto.git
+```
+2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+3. Run `cf-auto`
+```bash
+python cf-auto.py --help
+```
+
+>**Optional:** 
+>1. Add this alias to `~/.bashrc` to run `cf-auto` without interpreter name
+>```
+>alias cf-auto="python3 cf-auto.py"
+>```
+>2. Create a virtual environment before you install the dependencies
+>```bash
+>python -m venv .venv
+>source .venv/bin/activate
+>pip install -r requirements.txt
+>```
+
+# Configuration
+> **Note:** the configuration is too simple and stupid, just hardcoded
+
+## Parameters examples:
+```python
+TEMPLATE_PATH = "cf_template.cpp" # i.e. the path to your template file
+BUILD_OPTIONS = "-Wall -g0 -O0 --std=c++20" # i.e. just some options for g++
+```
+
+# TODOs
+- Nicer logging
+- Use and test by yourself
+- Add example usage

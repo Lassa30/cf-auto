@@ -2,12 +2,10 @@ import os
 import argparse
 from typing import Optional
 from cf import utils
-from cf.scrapper import init_scrapper
 
 
-parser = argparse.ArgumentParser(description="Codeforces automatization tool.")
+parser = argparse.ArgumentParser(description="Codeforces routine tasks automation tool.")
 subparsers = parser.add_subparsers(dest="command")
-scrapper = init_scrapper()
 
 
 def argument(*name_of_flags, **kwargs):
@@ -44,9 +42,9 @@ def create(args):
 
     match (args.mode):
         case "C":
-            utils.create_contest(contest_id, scrapper)
+            utils.create_contest(contest_id)
         case "P":
-            utils.create_practice_problem(contest_id, problem_id, scrapper)
+            utils.create_practice_problem(contest_id, problem_id)
         case _:
             print(f'Wrong create mode: {args.mode}. Expected "P" or "C".')
 
@@ -87,8 +85,6 @@ def main():
             args.func(args)
     except Exception as e:
         raise e
-    finally:
-        scrapper.driver_quit()
 
 
 if __name__ == "__main__":
