@@ -1,4 +1,16 @@
-# About cf-auto
+Table of contents
+---
+- [About](#about)
+- [Usage example](#usage-example)
+  - [Create files for the contest](#create-files-for-the-contest)
+  - [Create one problem to practice on](#create-one-problem-to-practice-on)
+  - [Demo](#demo)
+- [Installation](#installation)
+- [Configuration](#configuration)
+  - [Parameters examples:](#parameters-examples)
+- [TODOs](#todos)
+
+# About
 Here is the description you get after typing `cf-auto --help`
 ```bash
 usage: cf-auto.py [-h] {create,run} ...
