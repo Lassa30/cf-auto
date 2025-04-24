@@ -4,14 +4,12 @@ using namespace std;
 using ll = long long;
 template <typename T> using V = vector<T>;
 
-
 #define fast_io                                                                \
   ios_base::sync_with_stdio(false);                                            \
   cin.tie(nullptr);                                                            \
-  cout.tie(nullptr);
+  cout.tie(nullptr)
 #define YN(condition) cout << ((condition) ? "YES" : "NO")
 #define fori(s, e) for (ll i = s; i < e; i++)
-#define w(t) while (t--)
 #define edl << '\n'
 #define sp << ' ' <<
 #define all(a) a.begin(), a.end()
@@ -22,6 +20,7 @@ template <typename T> using V = vector<T>;
 
 template <typename T> using V = vector<T>;
 
+// Helpful overloads for debugging bad code
 // PAIR I/O
 
 ostream &operator<<(ostream &ostr, const pint &x) {
@@ -45,15 +44,15 @@ template <typename T> ostream &operator<<(ostream &ostr, const V<T> &v) {
 }
 
 // SOLVE FUNCTION
-void solve() {
- 
-}
+void solve() {}
 
 int main() {
-  fast_io
+  fast_io;
 
   ll t = 1;
-  w(t) {
+  // use this snippet for multiline tests
+  // std::cin >> t;
+  while (t--) {
     solve();
   }
   return 0;
