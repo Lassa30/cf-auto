@@ -1,5 +1,8 @@
 from time import sleep
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 def make_contest_url(contest_id):
     return f"https://codeforces.com/contest/{contest_id}"
@@ -11,11 +14,11 @@ def make_problem_url(contest_id, problem_id):
 
 class Scraper:
     def __init__(self):
-        self.options = uc.ChromeOptions()
+        self.options = webdriver.ChromeOptions()
         self.options.add_argument(
             "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
         )
-        self.driver = uc.Chrome(options=self.options)
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.options)
 
     def get_test_cases(self, problem_url):
         self.driver_get_url(problem_url)
