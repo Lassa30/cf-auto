@@ -1,16 +1,4 @@
-Table of contents
----
-- [About](#about)
-- [Usage example](#usage-example)
-  - [Create files for the contest](#create-files-for-the-contest)
-  - [Create one problem to practice on](#create-one-problem-to-practice-on)
-  - [Demo](#demo)
-- [Installation](#installation)
-- [Configuration](#configuration)
-  - [Parameters examples:](#parameters-examples)
-- [TODOs](#todos)
-
-# About
+# Intro
 Here is the description you get after typing `cf-auto --help`
 ```bash
 usage: cf-auto.py [-h] {create,run} ...
@@ -27,6 +15,18 @@ options:
 From this we can tell, that `cf-auto` is capable of:
 - creating necessary files for the specified **contest** OR **problem**
 - **compiling** and **running** your `C++` code with further comparing with fetched test cases: Right here, right now.
+
+Table of contents
+---
+- [Usage example](#usage-example)
+  - [Create files for the contest](#create-files-for-the-contest)
+  - [Create one problem to practice on](#create-one-problem-to-practice-on)
+  - [Demo](#demo)
+- [Installation](#installation)
+- [Configuration](#configuration)
+  - [Parameters examples:](#parameters-examples)
+- [TODOs](#todos)
+
 
 # Usage example
 Use `cf-auto` and solve problems in one directory
