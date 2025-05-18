@@ -1,7 +1,5 @@
 from time import sleep
 from bs4 import BeautifulSoup
-import undetected_chromedriver as uc
-
 
 def make_contest_url(contest_id):
     return f"https://codeforces.com/contest/{contest_id}"
